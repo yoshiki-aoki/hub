@@ -191,7 +191,7 @@ module Hub
         hosts = git_config('hub.host', :all).to_s.split("\n")
         hosts << default_host
         # support ssh.github.com
-        # https://help.github.com/articles/using-ssh-over-the-https-port
+        # http://help.github.com/articles/using-ssh-over-the-https-port
         hosts << "ssh.#{default_host}"
       end
 
@@ -261,11 +261,11 @@ module Hub
             path = '/wiki' + path
           end
         end
-        "https://#{host}/" + project_name + path.to_s
+        "http://#{host}/" + project_name + path.to_s
       end
 
       def git_url(options = {})
-        if options[:https] then "https://#{host}/"
+        if options[:https] then "http://#{host}/"
         elsif options[:private] or private? then "git@#{host}:"
         else "git://#{host}/"
         end + name_with_owner + '.git'

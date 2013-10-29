@@ -48,7 +48,7 @@ module Hub
 
     # Public: Fetch data for a specific repo.
     def repo_info project
-      get "https://%s/repos/%s/%s" %
+      get "http://%s/repos/%s/%s" %
         [api_host(project.host), project.owner, project.name]
     end
 
@@ -59,7 +59,7 @@ module Hub
 
     # Public: Fork the specified repo.
     def fork_repo project
-      res = post "https://%s/repos/%s/%s/forks" %
+      res = post "http://%s/repos/%s/%s/forks" %
         [api_host(project.host), project.owner, project.name]
       res.error! unless res.success?
     end
@@ -72,9 +72,9 @@ module Hub
       params[:homepage]    = options[:homepage]    if options[:homepage]
 
       if is_org
-        res = post "https://%s/orgs/%s/repos" % [api_host(project.host), project.owner], params
+        res = post "http://%s/orgs/%s/repos" % [api_host(project.host), project.owner], params
       else
-        res = post "https://%s/user/repos" % api_host(project.host), params
+        res = post "http://%s/user/repos" % api_host(project.host), params
       end
       res.error! unless res.success?
       res.data
@@ -82,7 +82,7 @@ module Hub
 
     # Public: Fetch info about a pull request.
     def pullrequest_info project, pull_id
-      res = get "https://%s/repos/%s/%s/pulls/%d" %
+      res = get "http://%s/repos/%s/%s/pulls/%d" %
         [api_host(project.host), project.owner, project.name, pull_id]
       res.error! unless res.success?
       res.data
@@ -103,7 +103,7 @@ module Hub
         params[:body]  = options[:body]  if options[:body]
       end
 
-      res = post "https://%s/repos/%s/%s/pulls" %
+      res = post "http://%s/repos/%s/%s/pulls" %
         [api_host(project.host), project.owner, project.name], params
 
       res.error! unless res.success?
@@ -111,7 +111,7 @@ module Hub
     end
 
     def statuses project, sha
-      res = get "https://%s/repos/%s/%s/statuses/%s" %
+      res = get "http://%s/repos/%s/%s/statuses/%s" %
         [api_host(project.host), project.owner, project.name, sha]
 
       res.error! unless res.success?
@@ -257,7 +257,7 @@ module Hub
           }
           if refresh
             # get current user info user to persist correctly capitalized login name
-            res = get "https://#{url.host}/user"
+            res = get "http://#{url.host}/user"
             res.error! unless res.success?
             config.update_username(url.host, user, res.data['login'])
           end
@@ -267,7 +267,7 @@ module Hub
 
       def obtain_oauth_token host, user, two_factor_code = nil
         # first try to fetch existing authorization
-        res = get "https://#{user}@#{host}/authorizations" do |req|
+        res = get "http://#{user}@#{host}/authorizations" do |req|
           req['X-GitHub-OTP'] = two_factor_code if two_factor_code
         end
         unless res.success?
@@ -283,7 +283,7 @@ module Hub
           found['token']
         else
           # create a new authorization
-          res = post "https://#{user}@#{host}/authorizations",
+          res = post "http://#{user}@#{host}/authorizations",
             :scopes => %w[repo], :note => 'hub', :note_url => oauth_app_url do |req|
               req['X-GitHub-OTP'] = two_factor_code if two_factor_code
             end
